@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>
+  Звання
+  <a href="{% url 'oblik:rank_create' %}"
+     class="btn btn-sm btn-success float-right">
+    +
+  </a>
+</h1>
+
+{% if ranks %}
+<ul class="list-group">
+  {% for rank in ranks %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    {{ rank.name }}
+    <div>
+      <a href="{% url 'oblik:rank_update' rank.pk %}"
+         class="btn btn-sm btn-outline-primary">
+        ✏️
+      </a>
+      <a href="{% url 'oblik:rank_delete' rank.pk %}"
+         class="btn btn-sm btn-outline-danger ml-1">
+        🗑
+      </a>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Нема звань для відображення</p>
+{% endif %}
+{% endblock %}

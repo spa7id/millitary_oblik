@@ -1,0 +1,72 @@
+<!-- Sidebar -->
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+  <!-- Sidebar - Brand -->
+  <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'oblik:index' %}">
+    <div class="sidebar-brand-icon rotate-n-15">
+      <i class="bi bi-shield-fill-check"></i>
+    </div>
+    <div class="sidebar-brand-text mx-3">Military Oblik</div>
+  </a>
+
+  <!-- Divider -->
+  <hr class="sidebar-divider my-0">
+
+  <!-- Nav Item - Dashboard -->
+  <li class="nav-item active">
+    <a class="nav-link" href="{% url 'oblik:index' %}">
+      <i class="bi bi-speedometer2"></i>
+      <span>Головна</span>
+    </a>
+  </li>
+
+  <!-- Divider -->
+  <hr class="sidebar-divider">
+
+  <!-- Heading -->
+  <div class="sidebar-heading">
+    Управління
+  </div>
+
+  <!-- Nav Item - Бійці -->
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'oblik:service_members_list' %}">
+      <i class="bi bi-people-fill"></i>
+      <span>Бійці</span>
+    </a>
+  </li>
+
+  <!-- Nav Item - Підрозділи -->
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'oblik:units_list' %}">
+      <i class="bi bi-diagram-3-fill"></i>
+      <span>Підрозділи</span>
+    </a>
+  </li>
+
+  <!-- Nav Item - Звання -->
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'oblik:ranks_list' %}">
+      <i class="bi bi-award-fill"></i>
+      <span>Звання</span>
+    </a>
+  </li>
+
+  <!-- Nav Item - Посади -->
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'oblik:positions_list' %}">
+      <i class="bi bi-briefcase-fill"></i>
+      <span>Посади</span>
+    </a>
+  </li>
+
+  <!-- Divider -->
+  <hr class="sidebar-divider d-none d-md-block">
+
+  <!-- Sidebar Toggler (Sidebar) -->
+  <div class="text-center d-none d-md-inline">
+    <button class="rounded-circle border-0" id="sidebarToggle"></button>
+  </div>
+
+</ul>
+<!-- End of Sidebar -->

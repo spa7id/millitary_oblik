@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>
+  Посада
+  <a href="{% url 'oblik:position_create' %}"
+     class="btn btn-sm btn-success float-right">
+    +
+  </a>
+</h1>
+
+{% if positions %}
+<ul class="list-group">
+  {% for position in positions %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    {{ position.name }}
+    <div>
+      <a href="{% url 'oblik:position_update' position.pk %}"
+         class="btn btn-sm btn-outline-primary">
+        ✏️
+      </a>
+      <a href="{% url 'oblik:position_delete' position.pk %}"
+         class="btn btn-sm btn-outline-danger ml-1">
+        🗑
+      </a>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Нема звань для відображення</p>
+{% endif %}
+{% endblock %}

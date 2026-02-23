@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Реєстрація</h2>
+
+<form method="post">
+  {% csrf_token %}
+
+  <h3>Облікові дані</h3>
+  {{ user_form.as_p }}
+
+  <h3>Дані військовослужбовця</h3>
+  {{ sm_form.as_p }}
+
+  <button type="submit">Зареєструватися</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}
+  <title>Головна - Military Oblik</title>
+{% endblock %}
+
+{% block content %}
+
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <h1 class="h3 mb-0 text-gray-800">Дашборд</h1>
+</div>
+
+<!-- Content Row -->
+<div class="row">
+
+  <!-- Бійці Card -->
+  <div class="col-xl-4 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+              Військовослужбовці
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ num_soldiers }}</div>
+          </div>
+          <div class="col-auto">
+            <i class="bi bi-people-fill" style="font-size: 2rem; color: #4e73df;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Звання Card -->
+  <div class="col-xl-4 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+              Звання
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ num_ranks }}</div>
+          </div>
+          <div class="col-auto">
+            <i class="bi bi-award-fill" style="font-size: 2rem; color: #1cc88a;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Підрозділи Card -->
+  <div class="col-xl-4 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+              Підрозділи
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ num_units }}</div>
+          </div>
+          <div class="col-auto">
+            <i class="bi bi-diagram-3-fill" style="font-size: 2rem; color: #36b9cc;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Content Row -->
+<div class="row">
+
+  <!-- Швидкі дії -->
+  <div class="col-lg-6 mb-4">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Швидкі дії</h6>
+      </div>
+      <div class="card-body">
+        {% if request.user.service_member.position.access_profile.can_add_personnel %}
+          <a href="{% url 'oblik:service_man_create' %}" class="btn btn-primary btn-icon-split mb-2">
+            <span class="icon text-white-50">
+              <i class="bi bi-plus-circle"></i>
+            </span>
+            <span class="text">Додати бійця</span>
+          </a>
+        {% endif %}
+
+        <a href="{% url 'oblik:service_members_list' %}" class="btn btn-info btn-icon-split mb-2">
+          <span class="icon text-white-50">
+            <i class="bi bi-people"></i>
+          </span>
+          <span class="text">Переглянути всіх бійців</span>
+        </a>
+
+        <a href="{% url 'oblik:units_list' %}" class="btn btn-success btn-icon-split mb-2">
+          <span class="icon text-white-50">
+            <i class="bi bi-diagram-3"></i>
+          </span>
+          <span class="text">Підрозділи</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Інформація -->
+  <div class="col-lg-6 mb-4">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Інформація</h6>
+      </div>
+      <div class="card-body">
+        <p>Ласкаво просимо до системи обліку особового складу!</p>
+        <p class="mb-0">
+          Користувач: <strong>{{ user.username }}</strong><br>
+          {% if user.service_member %}
+            Посада: <strong>{{ user.service_member.position.name }}</strong><br>
+            Підрозділ: <strong>{{ user.service_member.unit.name }}</strong>
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
