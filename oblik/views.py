@@ -70,13 +70,13 @@ class Service_Members_List_View(LoginRequiredMixin, generic.ListView):
             my_unit = user.service_member.unit
             print(f"Мій підрозділ: {my_unit.name}")
 
-            my_company = self.find_unit_by_type(my_unit, "Рота")
+            my_company = self.find_unit_by_type(my_unit, "рота")
             print(
                 f"Моя рота: {my_company.name if my_company else 'Не знайдено'}")
 
             queryset = ServiceMember.objects.select_related(
                 "rank", "position", "unit", "status",
-            )
+            ).filter(unit=my_company)
             return queryset
 
 
