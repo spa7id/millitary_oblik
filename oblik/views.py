@@ -122,6 +122,11 @@ class Units_Delete_View(LoginRequiredMixin, generic.DeleteView):
     template_name = "oblik/unit_form_confirm_delete.html"
     success_url = reverse_lazy("oblik:units_list")
 
+class Units_Detail_View(LoginRequiredMixin, generic.DetailView):
+    model = Unit
+    template_name = "oblik/unit_detail.html"
+    context_object_name = "unit_detail"
+
 class Ranks_List_View(LoginRequiredMixin, generic.ListView):
     model = Rank
     template_name = "oblik/ranks_list.html"

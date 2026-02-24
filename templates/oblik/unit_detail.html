@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>
+    Назва підрозділу: {{ unit_detail.name }}
+
+  </h1>
+  <h1>
+    Тип: {{ unit_detail.unit_type }}
+  </h1>
+
+  <p><strong> Підпорядковується :</strong> {{ unit_detail.parent.name }}</p>
+
+  <a href="{% url 'oblik:service_members_list' %}"
+     class="btn btn-secondary mt-3">
+    ← Назад до списку
+  </a>
+{% endblock %}
+
+
+
+

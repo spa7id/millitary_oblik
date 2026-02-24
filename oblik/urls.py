@@ -8,7 +8,7 @@ from oblik.views import (index, Units_List_View, Service_Members_List_View,
                          Positions_List_View, Position_Create_View,
                          Position_Update_View, Position_Delete_View,
                          Service_Member_Update_View, Service_Member_Delete_View,
-                         register_view) #Create_User_View)
+                         register_view, Units_Detail_View) #Create_User_View)
 
 urlpatterns = [
     path("", index, name="index"),
@@ -48,6 +48,9 @@ urlpatterns = [
     path("units_list/<int:pk>/delete/",
          Units_Delete_View.as_view(),
          name="units_delete"),
+    path("units_list/<int:pk>/",
+         Units_Detail_View.as_view(),
+         name="unit_detail"),
     # path("create_user/",
     #      Create_User_View.as_view(),
     #      name="create_user"),

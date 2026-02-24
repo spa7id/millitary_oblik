@@ -1,33 +1,42 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <h1>
   Перелік підрозділів
-  <a href="{% url 'oblik:units_create' %}"
-     class="btn btn-sm btn-success float-right">
-    +
-  </a>
+
+  {% if request.user.service_member.position.access_profile.can_add_personnel %}
+    <a href="{% url 'oblik:units_create' %}"
+       class="btn btn-sm btn-success float-right">
+      <i class="bi bi-plus-circle"></i> Додати
+    </a>
+  {% endif %}
 </h1>
 
 {% if units_list %}
 <ul class="list-group">
+
   {% for unit in units_list %}
   <li class="list-group-item d-flex justify-content-between align-items-center">
-    {{ unit.name }}
+    <a href="{% url 'oblik:unit_detail' unit.pk %}">
+      {{ unit.name }}
+    </a>
     <div>
       <a href="{% url 'oblik:units_update' unit.pk %}"
          class="btn btn-sm btn-outline-primary">
-        ✏️
+        <i class="bi bi-pencil-square"></i> Редагувати
       </a>
       <a href="{% url 'oblik:units_delete' unit.pk %}"
          class="btn btn-sm btn-outline-danger ml-1">
-        🗑
+        <i class="bi bi-trash"></i> Видалити
       </a>
     </div>
   </li>
+
   {% endfor %}
 </ul>
 {% else %}
 <p>Нема підрозділів для відображення</p>
 {% endif %}
 {% endblock %}
+
