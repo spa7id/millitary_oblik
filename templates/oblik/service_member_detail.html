@@ -1,16 +1,49 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-  <h1>
-    ПІБ: {{ service_member.name }} {{ service_member.surname }}
-  </h1>
 
-  <p><strong>Позивний:</strong> {{ service_member.call_sign }}</p>
-  <p><strong>Звання:</strong> {{ service_member.rank }}</p>
-  <p><strong>Підрозділ:</strong> {{ service_member.unit.name }}</p>
+<div class="card shadow mt-3">
+  <div class="card-body">
+    <h3>
+      <i class="bi bi-person-vcard"></i>
+      ПІБ: {{ service_member.name }} {{ service_member.surname }}
+    </h3>
 
-  <a href="{% url 'oblik:service_members_list' %}"
-     class="btn btn-secondary mt-3">
-    ← Назад до списку
-  </a>
+    <p>
+      <i class="bi bi-calendar-event"></i>
+      <strong>Дата народження:</strong> {{ service_member.birth_date }}
+    </p>
+
+    <p>
+      <i class="bi bi-person-arms-up"></i>
+      <strong>Позивний:</strong> {{ service_member.call_sign }}
+    </p>
+
+    <p>
+      <i class="bi bi-bookmark-star-fill"></i>
+      <strong>Звання:</strong> {{ service_member.rank }}
+    </p>
+
+    <p>
+      <i class="bi bi-briefcase"></i>
+      <strong>Посада:</strong> {{ service_member.position }}
+    </p>
+
+    <p>
+      <i class="bi bi-columns-gap"></i>
+      <strong>Підрозділ:</strong> {{ service_member.unit.name }}
+    </p>
+
+    <p>
+      <i class="bi bi-check-circle"></i>
+      <strong>Статус:</strong>
+      <span class="badge badge-success">{{ service_member.status }}</span>
+    </p>
+
+    <a href="{% url 'oblik:service_members_list' %}" class="btn btn-secondary mt-3">
+      ← Назад до списку
+    </a>
+  </div>
+</div>
+
 {% endblock %}
