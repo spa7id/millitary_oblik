@@ -127,6 +127,45 @@ class Units_Detail_View(LoginRequiredMixin, generic.DetailView):
     template_name = "oblik/unit_detail.html"
     context_object_name = "unit_detail"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        unit = self.object
+        sub_units = unit.sub_units.all()
+
+        context['sub_units'] = sub_units
+
+        all_units = self.get_all_units_in_hierarchy(unit)
+
+        service_members = ServiceMember.objects.filter(
+            unit__in=all_units
+        ).select_related('rank', 'position', 'unit')
+
+        context['service_members'] = service_members
+
+        return context
+
+    def get_all_units_in_hierarchy(self, root_unit):
+        if not root_unit:
+            return []
+
+        units = [root_unit]
+        units.extend(self.get_all_sub_units(root_unit))
+
+        return units
+
+    def get_all_sub_units(self, unit):
+
+        sub_units = []
+
+        children = unit.sub_units.all()
+
+        for child in children:
+            sub_units.append(child)
+            sub_units.extend(self.get_all_sub_units(child))
+
+        return sub_units
+
 class Ranks_List_View(LoginRequiredMixin, generic.ListView):
     model = Rank
     template_name = "oblik/ranks_list.html"
