@@ -139,7 +139,7 @@ class Units_Detail_View(LoginRequiredMixin, generic.DetailView):
 
         service_members = ServiceMember.objects.filter(
             unit__in=all_units
-        ).select_related('rank', 'position', 'unit')
+        ).select_related('rank', 'position', 'unit').order_by('-position__access_profile__command_level')
 
         context['service_members'] = service_members
 
