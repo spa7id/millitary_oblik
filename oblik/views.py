@@ -122,6 +122,7 @@ class Units_Delete_View(LoginRequiredMixin, generic.DeleteView):
     template_name = "oblik/unit_form_confirm_delete.html"
     success_url = reverse_lazy("oblik:units_list")
 
+
 class Units_Detail_View(LoginRequiredMixin, generic.DetailView):
     model = Unit
     template_name = "oblik/unit_detail.html"
@@ -132,14 +133,21 @@ class Units_Detail_View(LoginRequiredMixin, generic.DetailView):
 
         unit = self.object
         sub_units = unit.sub_units.all()
-
         context['sub_units'] = sub_units
 
-        all_units = self.get_all_units_in_hierarchy(unit)
+        breadcrumbs = [unit]
+        current = unit
+        while current.parent:
+            current = current.parent
+            breadcrumbs.append(current)
+        breadcrumbs.reverse()
+        context['breadcrumbs'] = breadcrumbs
 
         service_members = ServiceMember.objects.filter(
-            unit__in=all_units
-        ).select_related('rank', 'position', 'unit').order_by('-position__access_profile__command_level')
+            unit=unit
+        ).select_related(
+            'rank', 'position', 'unit'
+        ).order_by('-position__access_profile__command_level')
 
         context['service_members'] = service_members
 

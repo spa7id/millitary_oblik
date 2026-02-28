@@ -1,6 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
 
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="{% url 'oblik:index' %}">Головна</a>
+    </li>
+
+    <li class="breadcrumb-item">
+      <a href="{% url 'oblik:units_list' %}">Підрозділи</a>
+    </li>
+
+    {% for crumb in breadcrumbs %}
+      {% if forloop.last %}
+        <li class="breadcrumb-item active">{{ crumb.name }}</li>
+      {% else %}
+        <li class="breadcrumb-item">
+          <a href="{% url 'oblik:unit_detail' crumb.pk %}">
+            {{ crumb.name }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+</nav>
+
 <div class="card shadow mb-4">
   <div class="card-header bg-primary text-white">
     <h3 class="mb-0">
