@@ -1,11 +1,159 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Create Serviceman</h1>
 
-  <form action="" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit">
-  </form>
+<!-- Breadcrumbs -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="{% url 'oblik:index' %}">Головна</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a href="{% url 'oblik:service_members_list' %}">Бійці</a>
+    </li>
+    <li class="breadcrumb-item active">Додати бійця</li>
+  </ol>
+</nav>
+
+<!-- Картка форми -->
+<div class="card shadow mb-4">
+  <div class="card-header bg-success text-white">
+    <h3 class="mb-0">
+      <i class="bi bi-person-plus-fill"></i>
+      Додати нового військовослужбовця
+    </h3>
+  </div>
+
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+
+      {% if form.errors %}
+      <div class="alert alert-danger">
+        <h5>Помилки у формі:</h5>
+        <ul>
+          {% for field, errors in form.errors.items %}
+          <li><strong>{{ field }}:</strong> {{ errors }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
+
+      <!-- Особиста інформація -->
+      <h5 class="mb-3">
+        <i class="bi bi-person-vcard"></i>
+        Особиста інформація
+      </h5>
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+          {{ form.name }}
+          {% if form.name.errors %}
+            <div class="text-danger small">{{ form.name.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label for="{{ form.surname.id_for_label }}">{{ form.surname.label }}</label>
+          {{ form.surname }}
+          {% if form.surname.errors %}
+            <div class="text-danger small">{{ form.surname.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label for="{{ form.middle_name.id_for_label }}">{{
+            form.middle_name.label }}</label>
+          {{ form.middle_name }}
+          {% if form.middle_name.errors %}
+          <div class="text-danger small">{{ form.middle_name.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label for="{{ form.call_sign.id_for_label }}">{{ form.call_sign.label }}</label>
+          {{ form.call_sign }}
+          {% if form.call_sign.errors %}
+            <div class="text-danger small">{{ form.call_sign.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="{{ form.birth_date.id_for_label }}">{{ form.birth_date.label }}</label>
+          {{ form.birth_date }}
+          {% if form.birth_date.errors %}
+            <div class="text-danger small">{{ form.birth_date.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <!-- Військова інформація -->
+      <h5 class="mb-3">
+        <i class="bi bi-shield-fill-check"></i>
+        Військова інформація
+      </h5>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="{{ form.rank.id_for_label }}">{{ form.rank.label }}</label>
+          {{ form.rank }}
+          {% if form.rank.errors %}
+            <div class="text-danger small">{{ form.rank.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="{{ form.position.id_for_label }}">{{ form.position.label }}</label>
+          {{ form.position }}
+          {% if form.position.errors %}
+            <div class="text-danger small">{{ form.position.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="{{ form.unit.id_for_label }}">{{ form.unit.label }}</label>
+          {{ form.unit }}
+          {% if form.unit.errors %}
+            <div class="text-danger small">{{ form.unit.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+          {{ form.status }}
+          {% if form.status.errors %}
+            <div class="text-danger small">{{ form.status.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <!-- Кнопки -->
+      <div class="d-flex justify-content-between">
+        <a href="{% url 'oblik:service_members_list' %}" class="btn btn-secondary">
+          <i class="bi bi-x-circle"></i> Скасувати
+        </a>
+        <button type="submit" class="btn btn-success btn-lg">
+          <i class="bi bi-check-circle"></i> Зберегти
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
 {% endblock %}

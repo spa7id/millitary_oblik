@@ -19,6 +19,35 @@ class ServiceMemberForm(forms.ModelForm):
             )
         }
 
+        labels = {
+            'name': "Ім'я",
+            'middle_name': 'По батькові',
+            'surname': 'Прізвище',
+            'call_sign': 'Позивний',
+            'birth_date': 'Дата народження',
+            'rank': 'Звання',
+            'position': 'Посада',
+            'unit': 'Підрозділ',
+            'status': 'Статус',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        placeholders = {
+            'name': "Введіть ім'я",
+            'middle_name': 'Введіть По батькові',
+            'surname': 'Введіть прізвище',
+            'call_sign': 'Введіть позивний',
+            'birth_date': 'Дата народження',
+        }
+
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+            if field_name in placeholders:
+                field.widget.attrs['placeholder'] = placeholders[field_name]
+
     def clean_birth_date(self):
         birth_date = self.cleaned_data.get("birth_date")
 

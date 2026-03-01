@@ -153,26 +153,6 @@ class Units_Detail_View(LoginRequiredMixin, generic.DetailView):
 
         return context
 
-    def get_all_units_in_hierarchy(self, root_unit):
-        if not root_unit:
-            return []
-
-        units = [root_unit]
-        units.extend(self.get_all_sub_units(root_unit))
-
-        return units
-
-    def get_all_sub_units(self, unit):
-
-        sub_units = []
-
-        children = unit.sub_units.all()
-
-        for child in children:
-            sub_units.append(child)
-            sub_units.extend(self.get_all_sub_units(child))
-
-        return sub_units
 
 class Ranks_List_View(LoginRequiredMixin, generic.ListView):
     model = Rank
@@ -247,11 +227,6 @@ def register_view(request):
             "sm_form": sm_form,
         },
     )
-
-
-# class Create_User_View(LoginRequiredMixin, generic.CreateView):
-#     fields = "__all__"
-#     form_class = ServiceMemberCreationForm
 
 def test_session_view(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
