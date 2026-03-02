@@ -1,5 +1,5 @@
 from django import forms
-from .models import ServiceMember
+from .models import ServiceMember, Unit
 from datetime import date
 
 from django.contrib.auth.models import User
@@ -58,6 +58,29 @@ class ServiceMemberForm(forms.ModelForm):
 
         return birth_date
 
+
+class UnitForm(forms.ModelForm):
+    class Meta:
+        model = Unit
+        fields = "__all__"
+        labels = {
+            'name': 'Назва підрозділу',
+            'unit_type': 'Тип підрозділу',
+            'parent': 'Підпорядковується',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        placeholders = {
+            'name': 'Введіть назву підрозділу (наприклад: 1 взвод 3 рота)',
+        }
+
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+            if field_name in placeholders:
+                field.widget.attrs['placeholder'] = placeholders[field_name]
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()

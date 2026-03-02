@@ -7,8 +7,7 @@ from django.http import HttpRequest, HttpResponse
 
 from django.shortcuts import render, redirect
 from .models import ServiceMember, Rank, Unit, Position
-from .forms import ServiceMemberForm, UserRegisterForm
-#from millitary_oblik.forms import ServiceMemberCreationForm
+from .forms import ServiceMemberForm, UserRegisterForm, UnitForm
 from .mixins import (
     CanAddPersonnelMixin,
     CanEditPersonnelMixin,
@@ -107,7 +106,7 @@ class ServiceManCreateView(CanAddPersonnelMixin, generic.CreateView):
 
 class Units_List_Create_View(LoginRequiredMixin, generic.CreateView):
     model = Unit
-    fields = "__all__"
+    form_class = UnitForm
     success_url = reverse_lazy("oblik:units_list")
     template_name = "oblik/unit_form.html"
 

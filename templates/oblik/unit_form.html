@@ -1,13 +1,108 @@
 {% extends "base.html" %}
-{% load crispy_forms_filters %}
 
 {% block content %}
-  <h1>{{ object|yesno:"Update,Create" }} unit</h1>
 
-  <form action="" method="post" novalidate>
-    {% csrf_token %}
-    {{ form|crispy }}
-    <input class="btn btn-primary" type="submit" value="Submit">
-  </form>
+<!-- Breadcrumbs -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="{% url 'oblik:index' %}">Головна</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a href="{% url 'oblik:units_list' %}">Підрозділи</a>
+    </li>
+    <li class="breadcrumb-item active">
+      {% if object %}Редагувати{% else %}Додати{% endif %} підрозділ
+    </li>
+  </ol>
+</nav>
+
+<div class="card shadow mb-4">
+  <div class="card-header bg-primary text-white">
+    <h3 class="mb-0">
+      <i class="bi bi-building"></i>
+      {% if object %}
+        Редагувати підрозділ
+      {% else %}
+        Додати новий підрозділ
+      {% endif %}
+    </h3>
+  </div>
+
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+
+      {% if form.errors %}
+        <div class="alert alert-danger">
+          <h5>Помилки у формі:</h5>
+          <ul class="mb-0">
+            {% for field, errors in form.errors.items %}
+              <li><strong>{{ field }}:</strong> {{ errors }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-md-12 mb-3">
+          <label for="{{ form.name.id_for_label }}">
+            <i class="bi bi-tag"></i>
+            {{ form.name.label }}
+          </label>
+          {{ form.name }}
+          {% if form.name.errors %}
+            <div class="text-danger small">{{ form.name.errors }}</div>
+          {% endif %}
+          <small class="form-text text-muted">
+            Наприклад: "3 рота", "1 взвод 3 рота", "МТЗ"
+          </small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="{{ form.unit_type.id_for_label }}">
+            <i class="bi bi-diagram-3"></i>
+            {{ form.unit_type.label }}
+          </label>
+          {{ form.unit_type }}
+          {% if form.unit_type.errors %}
+            <div class="text-danger small">{{ form.unit_type.errors }}</div>
+          {% endif %}
+          <small class="form-text text-muted">
+            Батальйон, Рота, Взвод, Відділення тощо
+          </small>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="{{ form.parent.id_for_label }}">
+            <i class="bi bi-arrow-up-circle"></i>
+            {{ form.parent.label }}
+          </label>
+          {{ form.parent }}
+          {% if form.parent.errors %}
+            <div class="text-danger small">{{ form.parent.errors }}</div>
+          {% endif %}
+          <small class="form-text text-muted">
+            Виберіть батьківський підрозділ
+          </small>
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <div class="d-flex justify-content-between">
+        <a href="{% url 'oblik:units_list' %}" class="btn btn-secondary">
+          <i class="bi bi-x-circle"></i> Скасувати
+        </a>
+        <button type="submit" class="btn btn-primary btn-lg">
+          <i class="bi bi-check-circle"></i> Зберегти
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
 
 {% endblock %}
