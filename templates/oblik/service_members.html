@@ -34,9 +34,14 @@
   </li>
 
   {% endfor %}
+
 </ul>
 {% else %}
 <p>Нема військовослужбовців для відображення</p>
 {% endif %}
+
+{% include "includes/pagination.html" %}
+
 {% endblock %}
+
 

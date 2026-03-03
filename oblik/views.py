@@ -30,13 +30,14 @@ class Units_List_View(LoginRequiredMixin, generic.ListView):
     model = Unit
     template_name = "oblik/units_list.html"
     context_object_name = "units_list"
+    paginate_by = 8
 
 
 class Service_Members_List_View(LoginRequiredMixin, generic.ListView):
     model = ServiceMember
     template_name = "oblik/service_members.html"
     context_object_name = "service_members_list"
-    #paginate_by = 4
+    paginate_by = 8
 
     def find_unit_by_type(self, start_unit, unit_type):
         """Знайти підрозділ певного типу, рухаючись вгору"""
