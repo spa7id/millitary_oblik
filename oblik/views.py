@@ -2,6 +2,7 @@ from django.contrib.auth import login
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
 
 from django.http import HttpRequest, HttpResponse
 
@@ -97,6 +98,12 @@ class Service_Members_Detail_View(LoginRequiredMixin, generic.DetailView):
     template_name = "oblik/service_member_detail.html"
     context_object_name = "service_member"
 
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+        pk = self.kwargs.get("pk")
+        obj = get_object_or_404(queryset, pk=pk)
+        return obj
 
 class ServiceManCreateView(CanAddPersonnelMixin, generic.CreateView):
     model = ServiceMember
