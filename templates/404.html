@@ -1,5 +1,23 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <h1>Військовослужбовця не знайдено (404)</h1>
-  <p>Вибачте, але такий військовослужбовець відсутній.</p>
+
+<div class="container-fluid d-flex align-items-center justify-content-center" style="min-height: 70vh;">
+  <div class="text-center">
+
+    <h1 class="display-1 font-weight-bold text-gray-800">404</h1>
+    <p class="lead text-gray-800 mb-4">Сторінку не знайдено</p>
+
+    <p class="text-gray-500 mb-5">
+      Вибачте, але запитувана вами сторінка відсутня в системі.<br>
+      Можливо, вона була видалена або ви ввели неправильну адресу.
+    </p>
+
+    <a href="{% url 'oblik:index' %}" class="btn btn-primary btn-lg">
+      <i class="bi bi-house-door"></i> Повернутися на головну
+    </a>
+
+  </div>
+</div>
+
 {% endblock %}
