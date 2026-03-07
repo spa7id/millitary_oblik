@@ -2,7 +2,7 @@ from django.contrib.auth import login
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.shortcuts import get_object_or_404
+import logging
 
 from django.http import HttpRequest, HttpResponse
 
@@ -14,6 +14,9 @@ from .mixins import (
     CanEditPersonnelMixin,
     CanDeletePersonnelMixin
 )
+
+logger = logging.getLogger(__name__)
+
 
 def index(request: HttpRequest) -> HttpResponse:
     num_soldiers = ServiceMember.objects.count()
@@ -48,6 +51,8 @@ class Service_Members_List_View(LoginRequiredMixin, generic.ListView):
             return current
 
         while current.parent:
+            logger.debug(
+                f"Checking parent unit: {current.name} (type: {current.unit_type})")
             current = current.parent
             if current.unit_type == unit_type:
                 return current
@@ -57,23 +62,21 @@ class Service_Members_List_View(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         user = self.request.user
         my_command_level = user.service_member.position.access_profile.command_level
-        print(f"Command level: {my_command_level}")
+        logger.info(f"User {user.id} access with level {my_command_level}")
 
         if my_command_level >= 4:
-            print("Офіцер - показую всіх!")
+            logger.info("Access granted to full list for officer")
             queryset = ServiceMember.objects.select_related(
                 "rank", "position", "unit", "status",
             )
             return queryset
         else:
-            print("Солдат - фільтрація по роті!")
-
+            logger.info(f"Filtering list by company for user {user.id}")
             my_unit = user.service_member.unit
-            print(f"Мій підрозділ: {my_unit.name}")
+            logger.info(f"Unit for user {user.id}: {my_unit.name}")
 
             my_company = self.find_unit_by_type(my_unit, "рота")
-            print(
-                f"Моя рота: {my_company.name if my_company else 'Не знайдено'}")
+            logger.warning(f"{my_company.name if my_company else 'Не знайдено'}")
 
             queryset = ServiceMember.objects.select_related(
                 "rank", "position", "unit", "status",
