@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 import logging
 
 from django.http import HttpRequest, HttpResponse
-
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from .models import ServiceMember, Rank, Unit, Position
 from .forms import ServiceMemberForm, UserRegisterForm, UnitForm
@@ -130,6 +130,39 @@ class Units_Detail_View(LoginRequiredMixin, generic.DetailView):
     model = Unit
     template_name = "oblik/unit_detail.html"
     context_object_name = "unit_detail"
+
+    def is_unit_accessible(self, user_unit, requested_unit):
+        if user_unit == requested_unit:
+            return True
+
+        current = user_unit
+        while current.parent:
+            current = current.parent
+            if current == requested_unit:
+                return True
+
+        return False
+
+    def get_object(self):
+        obj = super().get_object()
+
+        user = self.request.user
+        command_level = user.service_member.position.access_profile.command_level
+
+        if command_level >= 4:
+            logger.info(f"Officer {user.username} accessing unit {obj.name}")
+            return obj
+
+        user_unit = user.service_member.unit
+
+        if self.is_unit_accessible(user_unit, obj):
+            logger.info(
+                f"Soldier {user.username} accessing unit {obj.name} - allowed")
+            return obj
+
+        logger.warning(
+            f"Soldier {user.username} tried to access unit {obj.name} - DENIED!")
+        raise PermissionDenied("У вас немає доступу до цього підрозділу")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
