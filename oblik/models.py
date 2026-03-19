@@ -54,7 +54,7 @@ class Unit(models.Model):
     )
 
     def __str__(self):
-        return f"{self.unit_type}: {self.name}"
+        return f"{self.name}"
 
 
 class ServiceMember(models.Model):
