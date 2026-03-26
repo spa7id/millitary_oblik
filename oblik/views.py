@@ -35,6 +35,7 @@ class Units_List_View(LoginRequiredMixin, generic.ListView):
     template_name = "oblik/units_list.html"
     context_object_name = "units_list"
     paginate_by = 8
+    ordering = ["name"]
 
 
 class Service_Members_List_View(LoginRequiredMixin, generic.ListView):
@@ -68,7 +69,7 @@ class Service_Members_List_View(LoginRequiredMixin, generic.ListView):
             logger.info("Access granted to full list for officer")
             queryset = ServiceMember.objects.select_related(
                 "rank", "position", "unit", "status",
-            )
+            ).order_by("surname", "name")
             return queryset
         else:
             logger.info(f"Filtering list by company for user {user.id}")
@@ -80,7 +81,7 @@ class Service_Members_List_View(LoginRequiredMixin, generic.ListView):
 
             queryset = ServiceMember.objects.select_related(
                 "rank", "position", "unit", "status",
-            ).filter(unit=my_company)
+            ).filter(unit=my_company).order_by("surname", "name")
             return queryset
 
 
