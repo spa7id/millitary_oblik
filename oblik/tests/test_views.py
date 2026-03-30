@@ -93,6 +93,18 @@ class UnitsListViewTest(TestCase):
 
         self.assertEqual(len(response.context['units_list']), 8)
 
+    def test_units_list_is_sorted_by_name(self):
+        self.client.login(username='testuser', password='test123')
+
+        Unit.objects.create(name="Б рота", unit_type="рота")
+        Unit.objects.create(name="А рота", unit_type="рота")
+
+        response = self.client.get(reverse('oblik:units_list'))
+
+        units = list(response.context['units_list'])
+        names = [u.name for u in units]
+        self.assertEqual(names, sorted(names))
+
 
 class UnitsDetailViewTest(TestCase):
     @classmethod
@@ -184,6 +196,33 @@ class UnitsDetailViewTest(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_unit_detail_shows_sub_units(self):
+        self.client.login(username='officer', password='test123')
+
+        platoon = Unit.objects.create(
+            name="1 взвод",
+            unit_type="взвод",
+            parent=self.company
+        )
+
+        response = self.client.get(
+            reverse('oblik:unit_detail', kwargs={'pk': self.company.pk})
+        )
+
+        self.assertIn('sub_units', response.context)
+        sub_units = list(response.context['sub_units'])
+        self.assertIn(platoon, sub_units)
+
+    def test_unit_detail_shows_service_members(self):
+        self.client.login(username='officer', password='test123')
+
+        response = self.client.get(
+            reverse('oblik:unit_detail', kwargs={'pk': self.company.pk})
+        )
+
+        self.assertIn('service_members', response.context)
+        self.assertGreater(len(response.context['service_members']), 0)
+
 
 class ServiceMembersListViewTest(TestCase):
     def setUp(self):
@@ -232,6 +271,145 @@ class ServiceMembersListViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'oblik/service_members.html')
 
+    def test_officer_sees_all_members(self):
+        self.client.login(username='officer', password='test123')
+
+        other_unit = Unit.objects.create(name="4 рота", unit_type="рота")
+
+        soldier_profile = AccessProfile.objects.create(
+            name="Солдат",
+            command_level=1
+        )
+
+        soldier_position = Position.objects.create(
+            name="Стрілець",
+            access_profile=soldier_profile
+        )
+
+        other_user = User.objects.create_user(
+            username='other_soldier',
+            password='test123'
+        )
+
+        rank = Rank.objects.create(name="Солдат")
+        status = Status.objects.create(name="Активний")
+
+        other_member = ServiceMember.objects.create(
+            name="Інший",
+            surname="Солдатович",
+            user=other_user,
+            rank=rank,
+            position=soldier_position,
+            unit=other_unit,
+            status=status
+        )
+
+        response = self.client.get(reverse('oblik:service_members_list'))
+
+        members = list(response.context['service_members_list'])
+        self.assertEqual(len(members), 2)
+
+    def test_soldier_sees_only_own_company(self):
+        soldier_user = User.objects.create_user(
+            username='soldier',
+            password='test123'
+        )
+
+        soldier_profile = AccessProfile.objects.create(
+            name="Солдат",
+            command_level=1
+        )
+
+        soldier_position = Position.objects.create(
+            name="Стрілець",
+            access_profile=soldier_profile
+        )
+
+        rank = Rank.objects.create(name="Солдат")
+        status = Status.objects.create(name="Активний")
+
+        soldier_member = ServiceMember.objects.create(
+            name="Солдат",
+            surname="Іванович",
+            user=soldier_user,
+            rank=rank,
+            position=soldier_position,
+            unit=self.unit,
+            status=status
+        )
+
+        other_unit = Unit.objects.create(name="4 рота", unit_type="рота")
+
+        other_user = User.objects.create_user(
+            username='other_soldier',
+            password='test123'
+        )
+
+        other_member = ServiceMember.objects.create(
+            name="Інший",
+            surname="Солдатович",
+            user=other_user,
+            rank=rank,
+            position=soldier_position,
+            unit=other_unit,
+            status=status
+        )
+
+        self.client.login(username='soldier', password='test123')
+
+        response = self.client.get(reverse('oblik:service_members_list'))
+
+        members = list(response.context['service_members_list'])
+
+        self.assertEqual(len(members), 2)
+        self.assertIn(soldier_member, members)
+        self.assertNotIn(other_member, members)
+
+    def test_service_members_sorted_by_surname(self):
+        self.client.login(username='officer', password='test123')
+
+        soldier_profile = AccessProfile.objects.create(
+            name="Солдат",
+            command_level=1
+        )
+
+        position = Position.objects.create(
+            name="Стрілець",
+            access_profile=soldier_profile
+        )
+
+        rank = Rank.objects.create(name="Солдат")
+        status = Status.objects.create(name="Активний")
+
+        user1 = User.objects.create_user(username='user1', password='test')
+        ServiceMember.objects.create(
+            name="Петро",
+            surname="Яковенко",
+            user=user1,
+            rank=rank,
+            position=position,
+            unit=self.unit,
+            status=status
+        )
+
+        user2 = User.objects.create_user(username='user2', password='test')
+        ServiceMember.objects.create(
+            name="Іван",
+            surname="Антонович",
+            user=user2,
+            rank=rank,
+            position=position,
+            unit=self.unit,
+            status=status
+        )
+
+        response = self.client.get(reverse('oblik:service_members_list'))
+
+        members = list(response.context['service_members_list'])
+        surnames = [m.surname for m in members]
+
+        self.assertEqual(surnames, sorted(surnames))
+
 
 class RanksListViewTest(TestCase):
     def setUp(self):
@@ -278,3 +456,125 @@ class RanksListViewTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'oblik/ranks_list.html')
+
+    def test_ranks_list_contains_ranks(self):
+        self.client.login(username='testuser', password='test123')
+
+        Rank.objects.create(name="Солдат")
+        Rank.objects.create(name="Сержант")
+
+        response = self.client.get(reverse('oblik:ranks_list'))
+
+        ranks = list(response.context['ranks'])
+        self.assertEqual(len(ranks), 3)
+
+
+class PositionsListViewTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='test123'
+        )
+
+        officer_profile = AccessProfile.objects.create(
+            name="Офіцер",
+            command_level=5
+        )
+
+        self.position = Position.objects.create(
+            name="Командир",
+            access_profile=officer_profile
+        )
+
+        unit = Unit.objects.create(name="3 рота", unit_type="рота")
+        rank = Rank.objects.create(name="Майор")
+        status = Status.objects.create(name="Активний")
+
+        ServiceMember.objects.create(
+            name="Тест",
+            surname="Тестович",
+            user=self.user,
+            rank=rank,
+            position=self.position,
+            unit=unit,
+            status=status
+        )
+
+        self.client = Client()
+
+    def test_positions_list_requires_login(self):
+        response = self.client.get(reverse('oblik:positions_list'))
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_positions_list_with_login(self):
+        self.client.login(username='testuser', password='test123')
+
+        response = self.client.get(reverse('oblik:positions_list'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'oblik/positions_list.html')
+
+
+class ServiceMemberDetailViewTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='test123'
+        )
+
+        officer_profile = AccessProfile.objects.create(
+            name="Офіцер",
+            command_level=5
+        )
+
+        position = Position.objects.create(
+            name="Командир",
+            access_profile=officer_profile
+        )
+
+        unit = Unit.objects.create(name="3 рота", unit_type="рота")
+        rank = Rank.objects.create(name="Майор")
+        status = Status.objects.create(name="Активний")
+
+        self.member = ServiceMember.objects.create(
+            name="Тест",
+            surname="Тестович",
+            user=self.user,
+            rank=rank,
+            position=position,
+            unit=unit,
+            status=status
+        )
+
+        self.client = Client()
+
+    def test_service_member_detail_requires_login(self):
+        response = self.client.get(
+            reverse('oblik:service_member_detail',
+                    kwargs={'pk': self.member.pk})
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_service_member_detail_with_login(self):
+        self.client.login(username='testuser', password='test123')
+
+        response = self.client.get(
+            reverse('oblik:service_member_detail',
+                    kwargs={'pk': self.member.pk})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'oblik/service_member_detail.html')
+
+    def test_service_member_detail_404_for_nonexistent(self):
+        self.client.login(username='testuser', password='test123')
+
+        response = self.client.get(
+            reverse('oblik:service_member_detail', kwargs={'pk': 99999})
+        )
+
+        self.assertEqual(response.status_code, 404)
