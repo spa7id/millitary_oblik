@@ -1,0 +1,21 @@
+[coverage:run]
+omit =
+    */migrations/*
+    */tests/*
+    manage.py
+    */apps.py
+    */__init__.py
+    */admin.py
+    */urls.py
+    */settings.py
+
+[coverage:report]
+omit =
+    */migrations/*
+    */tests/*
+    manage.py
+    */apps.py
+    */__init__.py
+    */admin.py
+    */urls.py
+    */settings.py

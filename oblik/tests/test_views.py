@@ -241,18 +241,18 @@ class ServiceMembersListViewTest(TestCase):
             access_profile=officer_profile
         )
 
-        unit = Unit.objects.create(name="3 рота", unit_type="рота")
-        rank = Rank.objects.create(name="Майор")
-        status = Status.objects.create(name="Активний")
+        self.unit = Unit.objects.create(name="3 рота", unit_type="рота")
+        self.rank = Rank.objects.create(name="Майор")
+        self.status = Status.objects.create(name="Активний")
 
         ServiceMember.objects.create(
             name="Офіцер",
             surname="Командирович",
             user=self.officer_user,
-            rank=rank,
+            rank=self.rank,
             position=officer_position,
-            unit=unit,
-            status=status
+            unit=self.unit,
+            status=self.status
         )
 
         self.client = Client()
